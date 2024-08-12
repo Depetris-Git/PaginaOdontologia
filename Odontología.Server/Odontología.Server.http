@@ -1,0 +1,6 @@
+@Odontología.Server_HostAddress = http://localhost:5277
+
+GET {{Odontología.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
