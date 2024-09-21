@@ -12,8 +12,10 @@ namespace Odontología.DB.Data
     {
         public DbSet<Paciente> Pacientes { get; set; }
         public DbSet<Pago> Pagos { get; set; }
-        public DbSet<TratamientoOd> TratamientosOd { get; set; }
         public DbSet<Presupuesto> Presupuestos { get; set; }
+        public DbSet<TipoTratamiento> TipoTratamientos { get; set; }
+        public DbSet<TratamientoOd> TratamientosOd { get; set; }
+
         public Context(DbContextOptions options) : base(options)
         {
         }

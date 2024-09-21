@@ -26,11 +26,11 @@ namespace Odontología.DB.Data.Entity
         public string? NumeroTelefonoSecundario { get; set; }
 
         [MaxLength(100, ErrorMessage = "Máximo número de caracteres {1}.")]
-        public string? Email { get; set; }
+        public string Email { get; set; }
        
-        public string? Direccion { get; set; }
+        public string Direccion { get; set; }
 
-        public List<TratamientoOd> TratamientosOd { get; set; }
-        public List<Presupuesto> Presupuestos { get; set; }
+        public List<TratamientoOd>? Historial_TratamientosOd { get; set; }
+        public List<Presupuesto>? Historial_Presupuestos { get; set; }
     }
 }

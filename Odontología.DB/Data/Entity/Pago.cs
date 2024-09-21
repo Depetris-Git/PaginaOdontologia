@@ -9,7 +9,7 @@ namespace Odontología.DB.Data.Entity
 {
     public class Pago : EntityBase
     {
-        [Required(ErrorMessage = "El Tratamiento que se está pagando es necesario")]
+        [Required(ErrorMessage = "El Presupuesto que se está pagando es necesario")]
         public int TratamientoOdId { get; set; }
         public TratamientoOd TratamientoOd { get; set; }
 

@@ -30,15 +30,20 @@ namespace Odontología.DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
                     b.Property<string>("DNI")
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Direccion")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -71,16 +76,24 @@ namespace Odontología.DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("FechaPago")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Monto")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("PresupuestoId")
+                        .HasColumnType("int");
+
                     b.Property<int>("TratamientoOdId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PresupuestoId");
 
                     b.HasIndex("TratamientoOdId");
 
@@ -95,15 +108,21 @@ namespace Odontología.DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
                     b.Property<string>("CodigoPres")
                         .IsRequired()
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)");
 
-                    b.Property<decimal>("CostoAbonado")
+                    b.Property<decimal?>("CostoAbonado")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("CostoIncial")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CostoPorPagar")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("CostoTotal")
@@ -112,14 +131,46 @@ namespace Odontología.DB.Migrations
                     b.Property<int>("PacienteId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("Pagado")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("PagoId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PacienteId");
+
+                    b.HasIndex("PagoId");
 
                     b.HasIndex(new[] { "CodigoPres" }, "CodigoPres_UQ")
                         .IsUnique();
 
                     b.ToTable("Presupuestos");
+                });
+
+            modelBuilder.Entity("Odontología.DB.Data.Entity.TipoTratamiento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Nombre" }, "TipoTrat_Nombre_UQ")
+                        .IsUnique();
+
+                    b.ToTable("TipoTratamientos");
                 });
 
             modelBuilder.Entity("Odontología.DB.Data.Entity.TratamientoOd", b =>
@@ -130,13 +181,10 @@ namespace Odontología.DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
                     b.Property<decimal>("CostoAcordado")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("CostoPagadoTotal")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("CostoPorPagar")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("CostoProtesista")
@@ -145,7 +193,10 @@ namespace Odontología.DB.Migrations
                     b.Property<decimal>("CostoTotal")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("FechaOperacion")
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaOperacion")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Observaciones")
@@ -155,25 +206,31 @@ namespace Odontología.DB.Migrations
                     b.Property<int>("PacienteId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Pagado")
-                        .HasColumnType("bit");
+                    b.Property<int?>("PresupuestoId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("TipoTratamiento")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                    b.Property<int>("TipoTratamientoId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PacienteId");
+
+                    b.HasIndex("PresupuestoId");
+
+                    b.HasIndex("TipoTratamientoId");
 
                     b.ToTable("TratamientosOd");
                 });
 
             modelBuilder.Entity("Odontología.DB.Data.Entity.Pago", b =>
                 {
-                    b.HasOne("Odontología.DB.Data.Entity.TratamientoOd", "TratamientoOd")
+                    b.HasOne("Odontología.DB.Data.Entity.Presupuesto", null)
                         .WithMany("Pagos")
+                        .HasForeignKey("PresupuestoId");
+
+                    b.HasOne("Odontología.DB.Data.Entity.TratamientoOd", "TratamientoOd")
+                        .WithMany()
                         .HasForeignKey("TratamientoOdId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -184,33 +241,53 @@ namespace Odontología.DB.Migrations
             modelBuilder.Entity("Odontología.DB.Data.Entity.Presupuesto", b =>
                 {
                     b.HasOne("Odontología.DB.Data.Entity.Paciente", "Paciente")
-                        .WithMany("Presupuestos")
+                        .WithMany("Historial_Presupuestos")
                         .HasForeignKey("PacienteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Odontología.DB.Data.Entity.Pago", "UltimoPago")
+                        .WithMany()
+                        .HasForeignKey("PagoId");
+
                     b.Navigation("Paciente");
+
+                    b.Navigation("UltimoPago");
                 });
 
             modelBuilder.Entity("Odontología.DB.Data.Entity.TratamientoOd", b =>
                 {
                     b.HasOne("Odontología.DB.Data.Entity.Paciente", "Paciente")
-                        .WithMany("TratamientosOd")
+                        .WithMany("Historial_TratamientosOd")
                         .HasForeignKey("PacienteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Odontología.DB.Data.Entity.Presupuesto", "Presupuesto")
+                        .WithMany()
+                        .HasForeignKey("PresupuestoId");
+
+                    b.HasOne("Odontología.DB.Data.Entity.TipoTratamiento", "TipoTratamiento")
+                        .WithMany()
+                        .HasForeignKey("TipoTratamientoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Paciente");
+
+                    b.Navigation("Presupuesto");
+
+                    b.Navigation("TipoTratamiento");
                 });
 
             modelBuilder.Entity("Odontología.DB.Data.Entity.Paciente", b =>
                 {
-                    b.Navigation("Presupuestos");
+                    b.Navigation("Historial_Presupuestos");
 
-                    b.Navigation("TratamientosOd");
+                    b.Navigation("Historial_TratamientosOd");
                 });
 
-            modelBuilder.Entity("Odontología.DB.Data.Entity.TratamientoOd", b =>
+            modelBuilder.Entity("Odontología.DB.Data.Entity.Presupuesto", b =>
                 {
                     b.Navigation("Pagos");
                 });

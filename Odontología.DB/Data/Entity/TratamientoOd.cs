@@ -9,31 +9,28 @@ namespace Odontología.DB.Data.Entity
 {
     public class TratamientoOd : EntityBase
     {
-        [Required(ErrorMessage = "El/los tipo/s de tratamiento/s es/son necesario")]
-        [MaxLength(300, ErrorMessage = "Máximo número de caracteres {1}.")]
-        public string TipoTratamiento { get; set; }
-
         [Required(ErrorMessage = "El Costo Acordado es necesario")]
         public decimal CostoAcordado { get; set; }
         public decimal? CostoProtesista { get; set; }
 
+        [Required(ErrorMessage = "La fecha en que se anota el tratamiento es necesaria")]
+        public DateTime FechaCreacion { get; set; }
+
         [Required(ErrorMessage = "El Costo Total es necesario")]
         public decimal CostoTotal { get; set; }
-        public decimal CostoPagadoTotal { get; set; }
-
-        [Required(ErrorMessage = "El Costo que falta pagar es necesario")]
-        public decimal CostoPorPagar { get; set; }
 
         [Required(ErrorMessage = "El Paciente a quién se le hará el tratamiento es necesario")]
         public int PacienteId { get; set; }
         public Paciente Paciente { get; set; }
-        public DateTime FechaOperacion { get; set; }
 
-        [Required(ErrorMessage = "Saber si está totalmente pagado o no el tratamiento es necesario")]
-        public bool Pagado { get; set; } = false;
+        [Required(ErrorMessage = "El Tipo de tratamiento es necesario")]
+        public int TipoTratamientoId { get; set; }
+        public TipoTratamiento TipoTratamiento { get; set; }
+        public int? PresupuestoId { get; set; }
+        public Presupuesto? Presupuesto { get; set; }
+        public DateTime? FechaOperacion { get; set; }
 
         [MaxLength(900, ErrorMessage = "Máximo número de caracteres {1}.")]
         public string? Observaciones { get; set; }
-        public List<Pago> Pagos { get; set; }
     }
 }

@@ -11,5 +11,6 @@ namespace Odontología.DB.Data
     {
         [Required(ErrorMessage = "El Id es necesario")]
         public int Id { get; set; }
+        public bool Activo { get; set; } = true;
     }
 }
