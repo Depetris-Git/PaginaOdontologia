@@ -30,8 +30,11 @@ namespace Odontología.DB.Data
             {
                 fk.DeleteBehavior = DeleteBehavior.Restrict;
             }
-
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Pago>()
+                .HasOne(pago => pago.Presupuesto)
+                 .WithMany(presupuestos => presupuestos.Pagos);
+            modelBuilder.Entity<Presupuesto>()
+                    .HasOne(ultimoPago => ultimoPago.UltimoPago);
         }
     }
 }

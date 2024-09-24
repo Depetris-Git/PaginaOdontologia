@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Odontología.DB.Data;
+using Odontología.Server.Repositorio;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,15 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<Context>(op => op.UseSqlServer("name=conn"));
 
+builder.Services.AddAutoMapper(typeof(Program));
+//builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddScoped<ITipoTratamientoRepositorio, TipoTratamientoRepositorio>();
+builder.Services.AddScoped<ITratamientoOdRepositorio, TratamientoOdRepositorio>();
+builder.Services.AddScoped<IPacienteRepositorio, PacienteRepositorio>();
+builder.Services.AddScoped<IPagoRepositorio, PagoRepositorio>();
+builder.Services.AddScoped<IPresupuestoRepositorio, PresupuestoRepositorio>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,6 +34,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+//app.UseBlazorFrameworkFiles();
+//app.UseStaticFiles();
+//app.UseRouting();
+//app.MapRazorPages();
 
 app.UseAuthorization();
 

@@ -12,8 +12,8 @@ using Odontología.DB.Data;
 namespace Odontología.DB.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240921184451_Inicial")]
-    partial class Inicial
+    [Migration("20240924094323_CambioPresup")]
+    partial class CambioPresup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,9 @@ namespace Odontología.DB.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
 
                     b.Property<string>("DNI")
                         .IsRequired()
@@ -76,23 +79,21 @@ namespace Odontología.DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("FechaPago")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Monto")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("PresupuestoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TratamientoOdId")
+                    b.Property<int>("PresupuestoId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PresupuestoId");
-
-                    b.HasIndex("TratamientoOdId");
 
                     b.ToTable("Pagos");
                 });
@@ -105,12 +106,15 @@ namespace Odontología.DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
                     b.Property<string>("CodigoPres")
                         .IsRequired()
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)");
 
-                    b.Property<decimal?>("CostoAbonado")
+                    b.Property<decimal>("CostoAbonado")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("CostoIncial")
@@ -131,11 +135,14 @@ namespace Odontología.DB.Migrations
                     b.Property<int?>("PagoId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UltimoPagoId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PacienteId");
 
-                    b.HasIndex("PagoId");
+                    b.HasIndex("UltimoPagoId");
 
                     b.HasIndex(new[] { "CodigoPres" }, "CodigoPres_UQ")
                         .IsUnique();
@@ -150,6 +157,9 @@ namespace Odontología.DB.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -172,10 +182,13 @@ namespace Odontología.DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
                     b.Property<decimal>("CostoAcordado")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("CostoProtesista")
+                    b.Property<decimal>("CostoProtesista")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("CostoTotal")
@@ -213,17 +226,13 @@ namespace Odontología.DB.Migrations
 
             modelBuilder.Entity("Odontología.DB.Data.Entity.Pago", b =>
                 {
-                    b.HasOne("Odontología.DB.Data.Entity.Presupuesto", null)
+                    b.HasOne("Odontología.DB.Data.Entity.Presupuesto", "Presupuesto")
                         .WithMany("Pagos")
-                        .HasForeignKey("PresupuestoId");
-
-                    b.HasOne("Odontología.DB.Data.Entity.TratamientoOd", "TratamientoOd")
-                        .WithMany()
-                        .HasForeignKey("TratamientoOdId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("PresupuestoId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("TratamientoOd");
+                    b.Navigation("Presupuesto");
                 });
 
             modelBuilder.Entity("Odontología.DB.Data.Entity.Presupuesto", b =>
@@ -236,7 +245,7 @@ namespace Odontología.DB.Migrations
 
                     b.HasOne("Odontología.DB.Data.Entity.Pago", "UltimoPago")
                         .WithMany()
-                        .HasForeignKey("PagoId");
+                        .HasForeignKey("UltimoPagoId");
 
                     b.Navigation("Paciente");
 
@@ -252,7 +261,7 @@ namespace Odontología.DB.Migrations
                         .IsRequired();
 
                     b.HasOne("Odontología.DB.Data.Entity.Presupuesto", "Presupuesto")
-                        .WithMany()
+                        .WithMany("TratamientosOd")
                         .HasForeignKey("PresupuestoId");
 
                     b.HasOne("Odontología.DB.Data.Entity.TipoTratamiento", "TipoTratamiento")
@@ -278,6 +287,8 @@ namespace Odontología.DB.Migrations
             modelBuilder.Entity("Odontología.DB.Data.Entity.Presupuesto", b =>
                 {
                     b.Navigation("Pagos");
+
+                    b.Navigation("TratamientosOd");
                 });
 #pragma warning restore 612, 618
         }

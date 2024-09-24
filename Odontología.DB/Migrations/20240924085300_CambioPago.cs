@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Odontología.DB.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicial : Migration
+    public partial class CambioPago : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,7 +22,8 @@ namespace Odontología.DB.Migrations
                     NumeroTelefono = table.Column<string>(type: "nvarchar(18)", maxLength: 18, nullable: false),
                     NumeroTelefonoSecundario = table.Column<string>(type: "nvarchar(18)", maxLength: 18, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Direccion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Direccion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Activo = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -35,7 +36,8 @@ namespace Odontología.DB.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false)
+                    Nombre = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
+                    Activo = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -48,10 +50,10 @@ namespace Odontología.DB.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TratamientoOdId = table.Column<int>(type: "int", nullable: false),
                     Monto = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     FechaPago = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PresupuestoId = table.Column<int>(type: "int", nullable: true)
+                    PresupuestoId = table.Column<int>(type: "int", nullable: false),
+                    Activo = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,11 +69,13 @@ namespace Odontología.DB.Migrations
                     CodigoPres = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
                     CostoIncial = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CostoTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CostoAbonado = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    CostoAbonado = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CostoPorPagar = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Pagado = table.Column<bool>(type: "bit", nullable: false),
                     PacienteId = table.Column<int>(type: "int", nullable: false),
-                    PagoId = table.Column<int>(type: "int", nullable: true)
+                    PagoId = table.Column<int>(type: "int", nullable: true),
+                    UltimoPagoId = table.Column<int>(type: "int", nullable: true),
+                    Activo = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,8 +87,8 @@ namespace Odontología.DB.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Presupuestos_Pagos_PagoId",
-                        column: x => x.PagoId,
+                        name: "FK_Presupuestos_Pagos_UltimoPagoId",
+                        column: x => x.UltimoPagoId,
                         principalTable: "Pagos",
                         principalColumn: "Id");
                 });
@@ -96,14 +100,15 @@ namespace Odontología.DB.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CostoAcordado = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CostoProtesista = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    CostoProtesista = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CostoTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PacienteId = table.Column<int>(type: "int", nullable: false),
                     TipoTratamientoId = table.Column<int>(type: "int", nullable: false),
                     PresupuestoId = table.Column<int>(type: "int", nullable: true),
                     FechaOperacion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Observaciones = table.Column<string>(type: "nvarchar(900)", maxLength: 900, nullable: true)
+                    Observaciones = table.Column<string>(type: "nvarchar(900)", maxLength: 900, nullable: true),
+                    Activo = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -139,11 +144,6 @@ namespace Odontología.DB.Migrations
                 column: "PresupuestoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pagos_TratamientoOdId",
-                table: "Pagos",
-                column: "TratamientoOdId");
-
-            migrationBuilder.CreateIndex(
                 name: "CodigoPres_UQ",
                 table: "Presupuestos",
                 column: "CodigoPres",
@@ -155,9 +155,9 @@ namespace Odontología.DB.Migrations
                 column: "PacienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Presupuestos_PagoId",
+                name: "IX_Presupuestos_UltimoPagoId",
                 table: "Presupuestos",
-                column: "PagoId");
+                column: "UltimoPagoId");
 
             migrationBuilder.CreateIndex(
                 name: "TipoTrat_Nombre_UQ",
@@ -185,15 +185,8 @@ namespace Odontología.DB.Migrations
                 table: "Pagos",
                 column: "PresupuestoId",
                 principalTable: "Presupuestos",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Pagos_TratamientosOd_TratamientoOdId",
-                table: "Pagos",
-                column: "TratamientoOdId",
-                principalTable: "TratamientosOd",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
@@ -203,24 +196,20 @@ namespace Odontología.DB.Migrations
                 name: "FK_Pagos_Presupuestos_PresupuestoId",
                 table: "Pagos");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_TratamientosOd_Presupuestos_PresupuestoId",
-                table: "TratamientosOd");
+            migrationBuilder.DropTable(
+                name: "TratamientosOd");
+
+            migrationBuilder.DropTable(
+                name: "TipoTratamientos");
 
             migrationBuilder.DropTable(
                 name: "Presupuestos");
 
             migrationBuilder.DropTable(
-                name: "Pagos");
-
-            migrationBuilder.DropTable(
-                name: "TratamientosOd");
-
-            migrationBuilder.DropTable(
                 name: "Pacientes");
 
             migrationBuilder.DropTable(
-                name: "TipoTratamientos");
+                name: "Pagos");
         }
     }
 }

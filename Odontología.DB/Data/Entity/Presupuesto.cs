@@ -21,8 +21,14 @@ namespace Odontología.DB.Data.Entity
 
         [Required(ErrorMessage = "El Costo Total es necesario")]
         public decimal CostoTotal { get; set; } //Acordado + Protesista
-        public decimal? CostoAbonado { get; set; }
+
+        [Required(ErrorMessage = "El Costo Abonado es necesario")]
+        public decimal CostoAbonado { get; set; }
+
+        [Required(ErrorMessage = "El Costo por pagar es necesario")]
         public decimal CostoPorPagar { get; set; } //PorPagar = Total - Abonado. Inicialmente, PorPagar = Total
+
+        [Required(ErrorMessage = "Si está pagado o no es necesario")]
         public bool Pagado {  get; set; } //CostoPorPagar == 0, 1; CostoPorPagar > 0, 0 
 
         [Required(ErrorMessage = "El Paciente a quien pertenece es necesario es necesario")]
@@ -30,7 +36,7 @@ namespace Odontología.DB.Data.Entity
         public Paciente Paciente { get; set; }
         public int? PagoId { get; set; }
         public Pago? UltimoPago { get; set; }
-
-        public List<Pago> Pagos { get; set; }
+        public List<Pago>? Pagos { get; set; }
+        public List<TratamientoOd>? TratamientosOd { get; set; }
     }
 }

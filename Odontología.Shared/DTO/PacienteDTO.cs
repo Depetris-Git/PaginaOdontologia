@@ -1,16 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Odontología.DB.Data.Entity
+namespace Odontología.Shared.DTO
 {
-    [Index(nameof(DNI), Name = "DNI_UQ", IsUnique = true)]
-    public class Paciente : EntityBase
+    public class PacienteDTO
     {
         [Required(ErrorMessage = "El DNI es necesario")]
         [MaxLength(10, ErrorMessage = "Máximo número de caracteres {1}.")]
@@ -31,8 +28,5 @@ namespace Odontología.DB.Data.Entity
 
         [Required(ErrorMessage = "El Domicilio del paciente es necesario")]
         public string Direccion { get; set; }
-
-        public List<TratamientoOd>? Historial_TratamientosOd { get; set; } = new List<TratamientoOd>();
-        public List<Presupuesto>? Historial_Presupuestos { get; set; } = new List<Presupuesto>();
     }
 }
