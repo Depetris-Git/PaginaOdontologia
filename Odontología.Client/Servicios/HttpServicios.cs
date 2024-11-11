@@ -2,7 +2,7 @@
 
 namespace Odontología.Client.Servicios
 {
-    public class HttpServicios
+    public class HttpServicios : IHttpServicios
     {
         private readonly HttpClient http;
         public HttpServicios(HttpClient http)
@@ -26,7 +26,7 @@ namespace Odontología.Client.Servicios
         private async Task<T?> DesSerializar<T>(HttpResponseMessage response)
         {
             var respuestaStr = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<T>(respuestaStr, new JsonSerializerOptions(){ PropertyNameCaseInsensitive = true });
+            return JsonSerializer.Deserialize<T>(respuestaStr, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
     }
 }

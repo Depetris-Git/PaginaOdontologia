@@ -1,0 +1,50 @@
+﻿@page "/api/Pacientes"
+@inject IHttpServicios http
+<PageTitle>Odontología - Pacientes</PageTitle>
+<h3>Lista de Pacientes</h3>
+<br />
+<table>
+    <tr>
+        <th>DNI</th>
+        <th>Nombre Completo</th>
+        <th>Email</th>
+        <th>Número de Teléfono</th>
+        <th>Número de Teléfono secundario</th>
+        <th>Dirección</th>
+    </tr>
+    @foreach (var item in listaPacientes)
+    {
+        <tr>
+            <td>@item.DNI</td>
+            <td>@item.NombreCompleto</td>
+            <td>@item.Email</td>
+            <td>@item.NumeroTelefono</td>
+            <td>@item.NumeroTelefonoSecundario</td>
+            <td>@item.Direccion</td>
+        </tr>
+    }
+</table>
+
+@code {
+    List<Paciente> listaPacientes;
+    string Mensaje = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await Leer();
+    }
+
+    private async Task Leer()
+    {
+        var respuesta = await http.Get<List<Paciente>>("api/Pacientes");
+        if(!respuesta.Error)
+        {
+            listaPacientes = respuesta.Respuesta;
+        }
+        else
+        {
+            Mensaje = "Error";
+        }
+    }
+}
