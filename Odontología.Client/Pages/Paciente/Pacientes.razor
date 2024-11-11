@@ -12,16 +12,34 @@
         <th>Número de Teléfono secundario</th>
         <th>Dirección</th>
     </tr>
-    @foreach (var item in listaPacientes)
+    @if (Mensaje == "")
     {
-        <tr>
-            <td>@item.DNI</td>
-            <td>@item.NombreCompleto</td>
-            <td>@item.Email</td>
-            <td>@item.NumeroTelefono</td>
-            <td>@item.NumeroTelefonoSecundario</td>
-            <td>@item.Direccion</td>
-        </tr>
+        @if (listaPacientes == null)
+        {
+            <p>Buscando...</p>
+        }
+        else if (listaPacientes.Count == 0)
+        {
+            <p>No existen pacientes.</p>
+        }
+        else
+        {
+            @foreach (var item in listaPacientes)
+            {
+                <tr>
+                    <td>@item.DNI</td>
+                    <td>@item.NombreCompleto</td>
+                    <td>@item.Email</td>
+                    <td>@item.NumeroTelefono</td>
+                    <td>@item.NumeroTelefonoSecundario</td>
+                    <td>@item.Direccion</td>
+                </tr>
+            }
+        }
+    }
+    else
+    {
+        <p>Error: @Mensaje</p>
     }
 </table>
 
@@ -38,13 +56,13 @@
     private async Task Leer()
     {
         var respuesta = await http.Get<List<Paciente>>("api/Pacientes");
-        if(!respuesta.Error)
+        if (!respuesta.Error)
         {
             listaPacientes = respuesta.Respuesta;
         }
         else
         {
-            Mensaje = "Error";
+            Mensaje = await respuesta.ObtenerError();
         }
     }
 }
