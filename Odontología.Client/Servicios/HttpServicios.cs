@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using Azure;
+using System.Text;
+using System.Text.Json;
 
 namespace Odontología.Client.Servicios
 {
@@ -23,6 +25,58 @@ namespace Odontología.Client.Servicios
             }
         }
 
+        public async Task<HttpRespuesta<object>> Post<T>(string url, T entidad)
+        {
+            var enviarJson = JsonSerializer.Serialize(entidad);
+            var enviarContent = new StringContent(enviarJson,
+                                                  Encoding.UTF8,
+                                                  "application/json");
+
+            var resp = await http.PostAsync(url, enviarContent);
+            if (resp.IsSuccessStatusCode)
+            {
+                var respuesta = await DesSerializar<object>(resp);
+                return new HttpRespuesta<object>(respuesta, false, resp);
+            }
+            else
+            {
+                return new HttpRespuesta<object>(default, true, resp);  
+            }
+            //return new HttpRespuesta<object>(null, !respuesta.IsSuccessStatusCode, respuesta);
+        }
+
+        public async Task<HttpRespuesta<object>> Put<T>(string url, T entidad)
+        {
+            var enviarJson = JsonSerializer.Serialize(entidad);
+            var enviarContent = new StringContent(enviarJson,
+                                                  Encoding.UTF8,
+                                                  "application/json");
+
+            var resp = await http.PutAsync(url, enviarContent);
+
+            if (resp.IsSuccessStatusCode)
+            {
+                var respuesta = await DesSerializar<object>(resp);
+                return new HttpRespuesta<object>(respuesta, false, resp);
+            }
+            else
+            {
+                return new HttpRespuesta<object>(default, true, resp);  
+            }
+        }
+
+       /*public async Task<HttpRespuesta<T>> Delete<T>(string url)
+        {
+             if (resp.IsSuccessStatusCode)
+            {
+                var respuesta = await DesSerializar<object>(resp);
+                return new HttpRespuesta<object>(respuesta, false, resp);
+            }
+            else
+            {
+                return new HttpRespuesta<object>(default, true, resp);  
+            }
+        }*/
         private async Task<T?> DesSerializar<T>(HttpResponseMessage response)
         {
             var respuestaStr = await response.Content.ReadAsStringAsync();

@@ -78,7 +78,7 @@ namespace Odontología.Server.Controllers
         }
 
         [HttpPut("{id:int}")] //api/Pacientes/*Id del paciente
-        public async Task<ActionResult> Put(int id, [FromBody] TipoTratamientoDTO entidadDTO)
+        public async Task<ActionResult> Put(int id, [FromBody] PacienteDTO entidadDTO)
         {
             Paciente? entidad = await repositorio.SelectById(id);
             if (entidad == null)

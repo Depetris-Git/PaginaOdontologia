@@ -1,0 +1,68 @@
+﻿@page "/api/Pacientes/agregar"
+@inject IHttpServicios http
+@inject NavigationManager navigatorManager
+<h3>Nuevo paciente</h3>
+<EditForm Model="paciente"  OnValidSubmit="Grabar">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>DNI</label>
+        <div>
+            <InputText class="form-control" @bind-Value="paciente.DNI"/>
+            <ValidationMessage For="@(() => paciente.DNI)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Nombre Completo</label>
+        <div>
+            <InputText class="form-control" @bind-Value="paciente.NombreCompleto" />
+            <ValidationMessage For="@(() => paciente.NombreCompleto)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Email</label>
+        <div>
+            <InputText class="form-control" @bind-Value="paciente.Email" />
+            <ValidationMessage For="@(() => paciente.Email)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Número de Teléfono</label>
+        <div>
+            <InputText class="form-control" @bind-Value="paciente.NumeroTelefono" />
+            <ValidationMessage For="@(() => paciente.NumeroTelefono)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Numero de Teléfono secundario (opcional)</label>
+        <div>
+            <InputText class="form-control" @bind-Value="paciente.NumeroTelefonoSecundario" />
+            <ValidationMessage For="@(() => paciente.NumeroTelefonoSecundario)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Dirección</label>
+        <div>
+            <InputText class="form-control" @bind-Value="paciente.Direccion" />
+            <ValidationMessage For="@(() => paciente.Direccion)" />
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-primary" type="submit">Aceptar</button>
+    <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+@code {
+    private Paciente paciente = new Paciente();
+    private async Task Grabar()
+    {
+        var httpRespuesta = await http.Post<Paciente>("api/Pacientes", paciente);
+        if(httpRespuesta.Error)
+        {
+            var body = httpRespuesta.HttpResponseMessage;
+        }
+        navigatorManager.NavigateTo("/api/Pacientes");
+    }
+    private async Task Cancelar()
+    {
+        navigatorManager.NavigateTo("/api/Pacientes");
+    }
+}

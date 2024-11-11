@@ -3,6 +3,8 @@
 <PageTitle>Odontología - Pacientes</PageTitle>
 <h3>Lista de Pacientes</h3>
 <br />
+<a class="btn btn-primary" href="/api/Pacientes/agregar">Agregar paciente</a>
+<br />
 <table>
     <tr>
         <th>DNI</th>
@@ -33,6 +35,11 @@
                     <td>@item.NumeroTelefono</td>
                     <td>@item.NumeroTelefonoSecundario</td>
                     <td>@item.Direccion</td>
+                    <td>
+                        <a class="btn btn-primary"
+                            href="api/Pacientes/editar/@item.Id">
+                            Editar</a>
+                    </td>
                 </tr>
             }
         }
